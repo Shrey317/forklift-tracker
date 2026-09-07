@@ -1,0 +1,43 @@
+name: Scheduled Cleanup
+
+# Runs independently of the CI/CD pipeline in ci.yml — this isn't a
+# deployment event, it's routine operational maintenance (Section 21's
+# 90-day LoginAttempt retention, expired session pruning). Deliberately a
+# separate workflow file rather than a step tacked onto ci.yml, so a
+# cleanup run's success/failure is never confused with a deployment's.
+
+on:
+  schedule:
+    - cron: '0 3 * * *' # daily at 03:00 UTC (05:00 SAST) — a quiet hour for a single-warehouse system
+  workflow_dispatch: {} # allow a manual trigger too, for testing this workflow itself
+
+jobs:
+  cleanup:
+    name: Prune login attempts and expired sessions
+    runs-on: ubuntu-latest
+    environment: production # needs the real DATABASE_URL — same protection as the deploy job in ci.yml
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '11'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm exec prisma generate
+
+      - name: Run cleanup
+        run: pnpm db:cleanup
+        env:
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}

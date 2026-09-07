@@ -1,0 +1,193 @@
+name: CI/CD
+
+# Section 37: the production application deploys through this automated
+# pipeline, not a manual push or Vercel's own auto-deploy-on-push. Every
+# push and PR runs the full test job; only a push to main can reach the
+# deploy job, and only after that job's own tests, build, and migration
+# steps all succeed in order.
+#
+# NOT VERIFIED IN THE SANDBOX THIS WAS BUILT IN — GitHub Actions runners
+# have full internet access (unlike this sandbox, which is why
+# prisma generate/migrate dev couldn't run locally — see README), so the
+# steps below should work as written. But this file itself was never
+# actually executed against a real GitHub repo, real secrets, or a real
+# Vercel project. Treat it as a carefully-reasoned draft, not a verified
+# pipeline — the first real run is the actual test.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancel superseded runs on the same branch/PR — no reason to finish
+# testing a commit that's already been replaced by a newer push.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '24.x'
+  PNPM_VERSION: '11'
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    # Section 28: a real disposable PostgreSQL instance, not a mock —
+    # the partial unique index and check constraints can't be proven
+    # against one. This container exists only for the duration of the
+    # job and is never reachable outside it.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test_migrator
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: forklift_tracker_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      # Section 29: PR/CI runs are strictly confined to the disposable
+      # instance above and never receive production credentials — these
+      # values only ever point at the ephemeral postgres service
+      # container declared in this same job, never at a real database.
+      DATABASE_URL: postgresql://test_migrator:test_password@localhost:5432/forklift_tracker_test
+      DIRECT_URL: postgresql://test_migrator:test_password@localhost:5432/forklift_tracker_test
+      APP_BASE_URL: http://localhost:3000
+      NODE_ENV: test
+      # Deliberately weak/fixed seed passwords are fine here — this
+      # database is destroyed at the end of the job and never exposed.
+      ADMIN_PASSWORD: TestAdminPassword123456
+      SUPERVISOR_PASSWORD: TestSupervisorPassword123456
+      FUEL_SUPERVISOR_PASSWORD: TestFuelSupervisorPassword123456
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile # Locked Decision #32: the committed lockfile decides exactly what ships
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Type-check
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Apply migrations to the disposable database
+        run: pnpm exec prisma migrate deploy
+
+      - name: Generate Prisma client
+        run: pnpm exec prisma generate
+
+      # INTERPRETIVE CALL: Section 21/37 say db:seed is "never part of the
+      # automated CI/CD pipeline" — but Section 28 also requires
+      # end-to-end tests to cover "login for all three roles," which is
+      # impossible without seeded accounts to log in as. Read narrowly:
+      # that rule's actual concern is a deployment pipeline touching
+      # PRODUCTION credentials as a routine, unattended side-effect —
+      # not seeding a disposable database that exists only for this job
+      # and is destroyed the moment it ends. The deploy job below is
+      # where that rule is actually load-bearing, and it never runs
+      # db:seed or the rotation command.
+      - name: Seed test accounts (disposable database only — see comment)
+        run: pnpm db:seed
+
+      - name: Run unit tests
+        run: pnpm test:unit
+
+      - name: Run integration tests
+        run: pnpm test:integration
+
+      - name: Build
+        run: pnpm build
+
+      - name: Run end-to-end tests
+        run: pnpm test:e2e
+
+  deploy:
+    name: Deploy to production
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    # A GitHub Environment named "production" — configure required
+    # reviewers and/or a deployment branch rule on this environment in
+    # the repo's own Settings > Environments UI (not expressible in this
+    # YAML file itself). That's what Section 29's "gated by required
+    # review" actually means in practice: the environment protection
+    # rule, not anything this workflow file can enforce on its own.
+    environment: production
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Vercel CLI
+        run: pnpm add --global vercel@latest
+
+      # Section 29: Vercel's automatic-promotion setting is configured
+      # (in the Vercel project's own settings, outside this file) so a
+      # build can only reach production traffic via this pipeline —
+      # `vercel pull`/`vercel build` here build the SAME artifact Vercel
+      # would have built automatically, just under this workflow's
+      # explicit control instead.
+      - name: Pull Vercel project settings
+        run: vercel pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
+
+      - name: Build for production
+        run: vercel build --prod --token="${{ secrets.VERCEL_TOKEN }}"
+
+      # Migrations run and MUST succeed before the new build is promoted
+      # to receive traffic (Section 37, point 7) — a deployment where
+      # migrations fail never goes live, and never leaves the app running
+      # against a schema it doesn't match. Uses DIRECT_URL specifically
+      # (Supabase's pooler doesn't support everything a migration needs —
+      # Section 29).
+      - name: Apply production migrations
+        run: pnpm exec prisma migrate deploy
+        env:
+          DIRECT_URL: ${{ secrets.PRODUCTION_DIRECT_URL }}
+
+      # Only reached if every step above succeeded, in order — tests,
+      # build, and migrations all passed before this line ever runs.
+      - name: Promote to production
+        run: vercel deploy --prebuilt --prod --token="${{ secrets.VERCEL_TOKEN }}"
+
+      # Section 37, point 9: deployment history stays identifiable by
+      # commit — the Vercel deployment this step just created is already
+      # tagged with ${{ github.sha }} by Vercel's own git integration
+      # metadata, so no separate tagging step is needed here.

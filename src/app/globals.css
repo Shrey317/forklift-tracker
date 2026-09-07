@@ -1,0 +1,52 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-primary: var(--app-primary);
+  --color-primary-hover: var(--app-primary-hover);
+  --color-background: var(--app-background);
+  --color-foreground: var(--app-foreground);
+  --color-success: var(--color-green-600);
+  --color-warning: var(--color-amber-600);
+  --color-danger: var(--color-red-600);
+  --color-card: var(--app-card);
+  --color-border: var(--app-border);
+
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+:root {
+  --app-primary: var(--color-blue-800);
+  --app-primary-hover: var(--color-blue-900);
+  --app-background: var(--color-slate-50);
+  --app-foreground: var(--color-slate-900);
+  --app-card: var(--color-white);
+  --app-border: var(--color-slate-200);
+}
+
+.dark {
+  --app-primary: var(--color-blue-600);
+  --app-primary-hover: var(--color-blue-700);
+  --app-background: var(--color-slate-950);
+  --app-foreground: var(--color-slate-50);
+  --app-card: var(--color-slate-900);
+  --app-border: var(--color-slate-800);
+  color-scheme: dark;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--color-background);
+  font-family: var(--font-sans);
+  color: var(--color-foreground);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
