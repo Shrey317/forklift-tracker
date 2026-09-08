@@ -21,7 +21,7 @@ export default async function StartShiftPage({ params }: { params: Promise<{ cod
     return (
       <main className="mx-auto flex min-h-screen max-w-sm flex-col items-center justify-center gap-4 px-4 text-center">
         <h1 className="text-lg font-semibold text-slate-900">Forklift not found</h1>
-        <Link href="/scan" className="text-sm font-medium text-primary underline">
+        <Link href="/scan" className="text-sm font-medium text-blue-800 underline">
           Back to scan
         </Link>
       </main>
@@ -36,7 +36,7 @@ export default async function StartShiftPage({ params }: { params: Promise<{ cod
           {forklift.displayId} is currently {forklift.status.replace('_', ' ').toLowerCase()} and can&apos;t
           start a new shift.
         </p>
-        <Link href={`/forklift/${code}`} className="text-sm font-medium text-primary underline">
+        <Link href={`/forklift/${code}`} className="text-sm font-medium text-blue-800 underline">
           Back to {forklift.displayId}
         </Link>
       </main>

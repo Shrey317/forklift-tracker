@@ -6,12 +6,12 @@ export default async function FieldLayout({ children }: { children: React.ReactN
   const user = await getCurrentUser();
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <header className="flex items-center justify-between border-b border-border bg-card px-4 py-3">
+    <div className="flex min-h-screen flex-col bg-slate-50">
+      <header className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 shadow-sm">
         <div className="flex items-center gap-4">
-          <span className="font-semibold text-foreground">Forklift Tracker</span>
+          <span className="font-semibold text-slate-900">Forklift Tracker</span>
           {user && (user.role === 'ADMIN' || user.role === 'SUPERVISOR') && (
-            <Link href="/admin/dashboard" className="text-sm font-medium text-primary hover:underline">
+            <Link href="/dashboard" className="text-sm font-medium text-blue-800 hover:underline">
               Dashboard
             </Link>
           )}

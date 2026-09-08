@@ -7,6 +7,8 @@ import { Field } from './field';
 import { StatusMessage } from './status-message';
 import { getFriendlyErrorMessage } from '@/lib/api-error-messages';
 
+import { useToast } from '@/components/ui/toast';
+
 interface FuelFormProps {
   forkliftId: string;
   forkliftCode: string;
@@ -14,6 +16,7 @@ interface FuelFormProps {
 
 export function FuelForm({ forkliftId, forkliftCode }: FuelFormProps) {
   const router = useRouter();
+  const { toast } = useToast();
   const [fuelAmountLiters, setFuelAmountLiters] = useState('');
   const [fuelCostZar, setFuelCostZar] = useState('');
   const [readingAtRefuel, setReadingAtRefuel] = useState('');
@@ -52,6 +55,7 @@ export function FuelForm({ forkliftId, forkliftCode }: FuelFormProps) {
         return;
       }
 
+      toast('Fuel log recorded.', 'success');
       router.push(`/forklift/${forkliftCode}`);
       router.refresh();
     } catch {
@@ -107,7 +111,7 @@ export function FuelForm({ forkliftId, forkliftCode }: FuelFormProps) {
           onChange={(e) => setNotes(e.target.value)}
           maxLength={1000}
           rows={3}
-          className="rounded-md border border-slate-300 px-3 py-2 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="rounded-md border border-slate-300 px-3 py-2 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800"
         />
       </div>
 

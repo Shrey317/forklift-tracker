@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/toast';
 import { EditShiftDialog } from '@/components/forms/edit-shift-dialog';
 import { ForceCloseDialog } from '@/components/forms/force-close-dialog';
+import { formatDateTime, formatKm } from '@/lib/format';
 
 interface ShiftRow {
   id: string;
@@ -101,7 +102,7 @@ export default function AdminShiftsPage() {
           id="status-filter"
           value={statusFilter}
           onChange={(e) => handleFilterChange(e.target.value)}
-          className="min-h-11 rounded-md border border-slate-300 px-3 py-2 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="min-h-11 rounded-md border border-slate-300 px-3 py-2 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800"
         >
           <option value="">All</option>
           <option value="ACTIVE">Active</option>
@@ -135,10 +136,10 @@ export default function AdminShiftsPage() {
             {items.map((s) => (
               <TableRow key={s.id}>
                 <TableCell className="font-medium text-slate-900">{s.forklift.displayId}</TableCell>
-                <TableCell>{new Date(s.startTime).toLocaleString('en-ZA')}</TableCell>
-                <TableCell>{s.endTime ? new Date(s.endTime).toLocaleString('en-ZA') : '—'}</TableCell>
+                <TableCell>{formatDateTime(s.startTime)}</TableCell>
+                <TableCell>{s.endTime ? formatDateTime(s.endTime) : '—'}</TableCell>
                 <TableCell>
-                  {s.startingReading} → {s.endingReading ?? '—'}
+                  {formatKm(s.startingReading)} → {s.endingReading ? formatKm(s.endingReading) : '—'}
                 </TableCell>
                 <TableCell>{s.totalHoursWorked ?? '—'}</TableCell>
                 <TableCell>{s.status}</TableCell>

@@ -7,6 +7,8 @@ import { Field } from './field';
 import { StatusMessage } from './status-message';
 import { getFriendlyErrorMessage } from '@/lib/api-error-messages';
 
+import { useToast } from '@/components/ui/toast';
+
 interface EndShiftFormProps {
   shiftId: string;
   forkliftCode: string;
@@ -15,6 +17,7 @@ interface EndShiftFormProps {
 
 export function EndShiftForm({ shiftId, forkliftCode, startingReading }: EndShiftFormProps) {
   const router = useRouter();
+  const { toast } = useToast();
   const [endingReading, setEndingReading] = useState('');
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
@@ -48,6 +51,7 @@ export function EndShiftForm({ shiftId, forkliftCode, startingReading }: EndShif
         return;
       }
 
+      toast('Shift ended successfully.', 'success');
       router.push(`/forklift/${forkliftCode}`);
       router.refresh();
     } catch {

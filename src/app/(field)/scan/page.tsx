@@ -34,7 +34,7 @@ export default function ScanPage() {
 
       <CameraScanner onScan={handleScan} />
       {scanError && (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="text-sm text-red-600">
           {scanError}
         </p>
       )}

@@ -41,9 +41,9 @@ export function Field({ label, error, hint, id, className, type, ...props }: Fie
           aria-invalid={error ? true : undefined}
           aria-describedby={cn(error && errorId, hint && hintId) || undefined}
           className={cn(
-            'w-full min-h-11 rounded-md border px-3 py-2 text-base outline-none bg-card text-foreground',
+            'w-full min-h-11 rounded-md border px-3 py-2 text-base outline-none bg-white border-slate-300 text-foreground',
             'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
-            error ? 'border-danger' : 'border-border',
+            error ? 'border-danger' : 'border-slate-300',
             isPasswordProp && 'pr-10',
             className,
           )}

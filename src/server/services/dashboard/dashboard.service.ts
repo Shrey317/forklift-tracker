@@ -14,15 +14,18 @@ export async function getDashboardData(user: User) {
   throw new Error('Invalid role');
 }
 
+import { getDashboardChartsData } from './charts';
+
 async function getAdminDashboardData() {
   const legacyStats = await getLegacyAdminStats();
   
   // Additional stats required by new spec
-  const [inUseForklifts, outOfServiceForklifts, totalShiftsCompleted, fuelCostAgg] = await Promise.all([
+  const [inUseForklifts, outOfServiceForklifts, totalShiftsCompleted, fuelCostAgg, trends] = await Promise.all([
     prisma.shift.count({ where: { status: 'ACTIVE', isDeleted: false } }),
     prisma.forklift.count({ where: { status: 'OUT_OF_SERVICE', isActive: true } }),
     prisma.shift.count({ where: { status: 'COMPLETED', isDeleted: false } }),
-    prisma.fuelLog.aggregate({ where: { isDeleted: false }, _sum: { fuelCostZar: true } })
+    prisma.fuelLog.aggregate({ where: { isDeleted: false }, _sum: { fuelCostZar: true } }),
+    getDashboardChartsData()
   ]);
 
   const recentShifts = await prisma.shift.findMany({
@@ -54,6 +57,7 @@ async function getAdminDashboardData() {
       totalShiftsCompleted,
       totalFuelCostZar: (fuelCostAgg._sum.fuelCostZar ?? new Decimal(0)).toString(),
     },
+    trends,
     recentShifts,
     fuelSummary: {
       recentLogs: recentFuel
@@ -65,6 +69,7 @@ async function getAdminDashboardData() {
     }
   };
 }
+
 
 async function getSupervisorDashboardData(userId: string) {
   const today = new Date();

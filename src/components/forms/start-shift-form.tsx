@@ -7,6 +7,8 @@ import { Field } from './field';
 import { StatusMessage } from './status-message';
 import { getFriendlyErrorMessage } from '@/lib/api-error-messages';
 
+import { useToast } from '@/components/ui/toast';
+
 interface StartShiftFormProps {
   forkliftId: string;
   forkliftCode: string;
@@ -14,6 +16,7 @@ interface StartShiftFormProps {
 
 export function StartShiftForm({ forkliftId, forkliftCode }: StartShiftFormProps) {
   const router = useRouter();
+  const { toast } = useToast();
   const [startingReading, setStartingReading] = useState('');
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
@@ -48,6 +51,7 @@ export function StartShiftForm({ forkliftId, forkliftCode }: StartShiftFormProps
         return;
       }
 
+      toast('Shift started successfully.', 'success');
       router.push(`/forklift/${forkliftCode}`);
       router.refresh();
     } catch {

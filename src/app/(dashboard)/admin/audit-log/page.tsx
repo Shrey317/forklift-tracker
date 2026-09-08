@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useState } from 'react';
 import { EmptyState, Pagination, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
+import { formatDateTime } from '@/lib/format';
 
 interface AuditLogRow {
   id: string;
@@ -73,7 +74,7 @@ export default function AdminAuditLogPage() {
           id="target-type-filter"
           value={targetType}
           onChange={(e) => handleFilterChange(e.target.value)}
-          className="min-h-11 rounded-md border border-slate-300 px-3 py-2 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="min-h-11 rounded-md border border-slate-300 px-3 py-2 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800"
         >
           <option value="">All</option>
           {TARGET_TYPES.map((t) => (
@@ -109,7 +110,7 @@ export default function AdminAuditLogPage() {
             {items.map((entry) => (
               <Fragment key={entry.id}>
                 <TableRow>
-                  <TableCell>{new Date(entry.createdAt).toLocaleString('en-ZA')}</TableCell>
+                  <TableCell>{formatDateTime(entry.createdAt)}</TableCell>
                   <TableCell>
                     {entry.actorUser.username} ({entry.actorRole.replace('_', ' ').toLowerCase()})
                   </TableCell>
@@ -122,7 +123,7 @@ export default function AdminAuditLogPage() {
                     <button
                       type="button"
                       onClick={() => setExpandedId(expandedId === entry.id ? null : entry.id)}
-                      className="text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      className="text-blue-800 underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800"
                       aria-expanded={expandedId === entry.id}
                     >
                       {expandedId === entry.id ? 'Hide' : 'View'}

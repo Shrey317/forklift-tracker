@@ -81,14 +81,20 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center px-4">
+    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-sm">
-        <h1 className="mb-1 text-2xl font-semibold text-foreground">Forklift Tracker</h1>
-        <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">Sign in to continue.</p>
-        <Suspense fallback={<div className="h-64 animate-pulse rounded-md bg-slate-100 dark:bg-slate-800" />}>
-          <LoginForm />
-        </Suspense>
+        <div className="mb-8 text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-800 text-white font-bold text-lg">FT</div>
+          <h1 className="text-2xl font-semibold text-slate-900">Forklift Tracker</h1>
+          <p className="mt-1 text-sm text-slate-500">Fleet management system — sign in to continue.</p>
+        </div>
+        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <Suspense fallback={<div className="h-64 animate-pulse rounded-md bg-slate-100" />}>
+            <LoginForm />
+          </Suspense>
+        </div>
       </div>
     </main>
   );
 }
+

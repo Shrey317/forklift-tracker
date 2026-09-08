@@ -208,6 +208,8 @@ model Shift {
   fuelLogs FuelLog[]
 
   @@index([forkliftId, status])
+  @@index([startTime])
+  @@index([isDeleted, status])
   @@index([endTime])
   @@map("shifts")
 }
@@ -231,6 +233,7 @@ model FuelLog {
 
   @@index([forkliftId])
   @@index([refuelDateTime])
+  @@index([isDeleted, refuelDateTime])
   @@map("fuel_logs")
 }
 

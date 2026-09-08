@@ -28,7 +28,7 @@ export default async function ForkliftLandingPage({
           This code doesn&apos;t match an active forklift. It may have been deactivated, or the code may be
           incorrect.
         </p>
-        <Link href="/scan" className="text-sm font-medium text-primary underline">
+        <Link href="/scan" className="text-sm font-medium text-blue-800 underline">
           Back to scan
         </Link>
       </main>
@@ -90,8 +90,8 @@ function StatusBadge({ status }: { status: string }) {
     <span
       className={
         isActive
-          ? 'mt-2 inline-flex items-center gap-1.5 rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-success'
-          : 'mt-2 inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-warning'
+          ? 'mt-2 inline-flex items-center gap-1.5 rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-800'
+          : 'mt-2 inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800'
       }
     >
       {/* Section 25: status is never conveyed by color alone — the text
@@ -126,7 +126,7 @@ function ActionLink({
   return (
     <Link
       href={href}
-      className="flex min-h-11 w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      className="flex min-h-11 w-full items-center justify-center rounded-md bg-blue-800 px-4 py-2 text-sm font-medium text-white hover:bg-blue-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800"
     >
       {label}
     </Link>
