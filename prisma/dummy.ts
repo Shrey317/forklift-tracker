@@ -56,7 +56,7 @@ async function main() {
 
     await prisma.shift.create({
       data: {
-        forkliftId: createdForklifts[0].id,
+        forkliftId: createdForklifts[0]!.id,
         createdById: supervisorUser.id,
         endedById: supervisorUser.id,
         endType: 'NORMAL',
@@ -73,7 +73,7 @@ async function main() {
 
     await prisma.shift.create({
       data: {
-        forkliftId: createdForklifts[1].id,
+        forkliftId: createdForklifts[1]!.id,
         createdById: adminUser.id,
         endedById: adminUser.id,
         endType: 'NORMAL',
@@ -90,7 +90,7 @@ async function main() {
     // Create one active shift for FL-003
     await prisma.shift.create({
       data: {
-        forkliftId: createdForklifts[2].id,
+        forkliftId: createdForklifts[2]!.id,
         createdById: supervisorUser.id,
         startTime: new Date(new Date().getTime() - 2 * 60 * 60 * 1000), // Started 2 hours ago
         status: 'ACTIVE',
@@ -103,7 +103,7 @@ async function main() {
     // Create fuel logs
     await prisma.fuelLog.create({
       data: {
-        forkliftId: createdForklifts[0].id,
+        forkliftId: createdForklifts[0]!.id,
         createdById: fuelUser.id,
         fuelAmountLiters: 40.5,
         fuelCostZar: 950.25,
@@ -114,7 +114,7 @@ async function main() {
 
     await prisma.fuelLog.create({
       data: {
-        forkliftId: createdForklifts[1].id,
+        forkliftId: createdForklifts[1]!.id,
         createdById: adminUser.id,
         fuelAmountLiters: 25.0,
         fuelCostZar: 580.00,
@@ -128,7 +128,7 @@ async function main() {
     // Create maintenance logs
     await prisma.maintenanceLog.create({
       data: {
-        forkliftId: createdForklifts[3].id, // Maintenance
+        forkliftId: createdForklifts[3]!.id, // Maintenance
         date: new Date(),
         description: 'Scheduled engine check',
         createdById: adminUser.id,
@@ -138,7 +138,7 @@ async function main() {
 
     await prisma.maintenanceLog.create({
       data: {
-        forkliftId: createdForklifts[4].id, // Out of service
+        forkliftId: createdForklifts[4]!.id, // Out of service
         date: pastDate2,
         description: 'Major hydraulic failure repair',
         costZar: 4500.00,

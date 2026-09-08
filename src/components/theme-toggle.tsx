@@ -16,7 +16,7 @@ export function ThemeToggle({ className }: { className?: string }) {
 
   if (!mounted) {
     return (
-      <Button variant="outline" className={cn("w-9 h-9 p-0", className)} aria-label="Toggle theme">
+      <Button variant="ghost" className={cn("w-9 h-9 p-0", className)} aria-label="Toggle theme">
         <span className="w-4 h-4" />
       </Button>
     );
@@ -24,7 +24,7 @@ export function ThemeToggle({ className }: { className?: string }) {
 
   return (
     <Button
-      variant="outline"
+      variant="ghost"
       className={cn("w-9 h-9 p-0 flex items-center justify-center relative", className)}
       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
       aria-label="Toggle theme"
