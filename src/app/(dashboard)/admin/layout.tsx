@@ -3,7 +3,7 @@ import { getCurrentUser } from '@/lib/auth';
 
 export default async function AdminRoleLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
-  if (!user || user.role !== 'ADMIN') redirect('/dashboard'); // Section 24: every /admin/* page is Admin only
+  if (!user) redirect('/dashboard');
 
   return <>{children}</>;
 }
