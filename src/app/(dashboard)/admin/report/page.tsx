@@ -209,9 +209,9 @@ export default function ReportPage() {
               key={p.key}
               type="button"
               onClick={() => setPreset(p.key)}
-              className={`min-h-9 rounded-md px-3 py-1.5 text-sm font-medium transition-colors
+              className={`min-h-9 rounded-full px-4 py-1.5 text-sm font-medium transition-colors
                 ${preset === p.key
-                  ? 'bg-blue-800 text-white'
+                  ? 'bg-slate-800 text-white'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
             >
@@ -245,16 +245,25 @@ export default function ReportPage() {
           </div>
         )}
 
-        <div className="flex flex-wrap gap-3">
-          <Button onClick={fetchReport} loading={loading}>
+        <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-slate-200 pt-6">
+          <Button onClick={fetchReport} loading={loading} className="w-full sm:w-auto">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" className="mr-1">
+              <path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"></path>
+            </svg>
             Generate Report
           </Button>
           {data && (
             <>
-              <Button variant="secondary" onClick={exportExcel} loading={exportingExcel}>
+              <Button variant="secondary" onClick={exportExcel} loading={exportingExcel} className="w-full sm:w-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" className="mr-1">
+                  <path d="M160,216H48V40H160V72a8,8,0,0,0,16,0V40a16,16,0,0,0-16-16H48A16,16,0,0,0,32,40V216a16,16,0,0,0,16,16H160a16,16,0,0,0,16-16V184a8,8,0,0,0-16,0Zm56-96a8,8,0,0,0-8-8H164.94l20.48-24.58a8,8,0,0,0-12.28-10.24l-32,38.4a8,8,0,0,0,0,10.24l32,38.4a8,8,0,0,0,12.28-10.24L164.94,128H208A8,8,0,0,0,216,120Z"></path>
+                </svg>
                 Export Excel
               </Button>
-              <Button variant="secondary" onClick={exportPdf} loading={exportingPdf}>
+              <Button variant="secondary" onClick={exportPdf} loading={exportingPdf} className="w-full sm:w-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" className="mr-1">
+                  <path d="M224,152a8,8,0,0,1-8,8H192v16h24a8,8,0,0,1,0,16H192v16a8,8,0,0,1-16,0V152a8,8,0,0,1,8-8h40A8,8,0,0,1,224,152Zm-96-8v64a8,8,0,0,1-8,8H96a24,24,0,0,1-24-24V168a24,24,0,0,1,24-24h24A8,8,0,0,1,128,144Zm-16,8H96a8,8,0,0,0-8,8v24a8,8,0,0,0,8,8h16Zm-64,8v40a8,8,0,0,1-16,0V152a8,8,0,0,1,8-8H64a24,24,0,0,1,0,48H48a8,8,0,0,1,0-16H64a8,8,0,0,0,0-16H40A8,8,0,0,1,48,152ZM216,40V88a8,8,0,0,1-16,0V48H48V208H200V120a8,8,0,0,1,16,0v88a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V40A16,16,0,0,1,48,24H200A16,16,0,0,1,216,40Z"></path>
+                </svg>
                 Export PDF
               </Button>
             </>

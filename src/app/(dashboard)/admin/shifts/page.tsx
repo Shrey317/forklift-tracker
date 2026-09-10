@@ -9,6 +9,7 @@ import { useToast } from '@/components/ui/toast';
 import { EditShiftDialog } from '@/components/forms/edit-shift-dialog';
 import { ForceCloseDialog } from '@/components/forms/force-close-dialog';
 import { formatDateTime, formatReading } from '@/lib/format';
+import { useAdminUser } from '@/components/admin/admin-provider';
 
 interface ShiftRow {
   id: string;
@@ -24,6 +25,7 @@ interface ShiftRow {
 }
 
 export default function AdminShiftsPage() {
+  const user = useAdminUser();
   const { toast } = useToast();
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(1);
@@ -122,7 +124,7 @@ export default function AdminShiftsPage() {
               <TableHeaderCell>Reading</TableHeaderCell>
               <TableHeaderCell>Hours</TableHeaderCell>
               <TableHeaderCell>Status</TableHeaderCell>
-              <TableHeaderCell>Actions</TableHeaderCell>
+              {user.role === 'ADMIN' && <TableHeaderCell>Actions</TableHeaderCell>}
             </tr>
           </TableHead>
           <TableBody>
@@ -143,23 +145,25 @@ export default function AdminShiftsPage() {
                 </TableCell>
                 <TableCell>{s.totalHoursWorked ?? '—'}</TableCell>
                 <TableCell>{s.status}</TableCell>
-                <TableCell>
-                  <div className="flex flex-wrap gap-2">
-                    <Button variant="ghost" onClick={() => setEditing(s)}>
-                      Edit
-                    </Button>
-                    {s.status === 'ACTIVE' && (
-                      <Button variant="ghost" onClick={() => setForceClosing(s)}>
-                        Force-close
+                {user.role === 'ADMIN' && (
+                  <TableCell>
+                    <div className="flex flex-wrap gap-2">
+                      <Button variant="ghost" onClick={() => setEditing(s)}>
+                        Edit
                       </Button>
-                    )}
-                    {s.status === 'COMPLETED' && (
-                      <Button variant="ghost" onClick={() => setDeleting(s)}>
-                        Delete
-                      </Button>
-                    )}
-                  </div>
-                </TableCell>
+                      {s.status === 'ACTIVE' && (
+                        <Button variant="ghost" onClick={() => setForceClosing(s)}>
+                          Force-close
+                        </Button>
+                      )}
+                      {s.status === 'COMPLETED' && (
+                        <Button variant="ghost" onClick={() => setDeleting(s)}>
+                          Delete
+                        </Button>
+                      )}
+                    </div>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>

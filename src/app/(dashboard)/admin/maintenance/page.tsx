@@ -7,6 +7,7 @@ import { EmptyState, Pagination, Table, TableBody, TableCell, TableHead, TableHe
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/toast';
 import { MaintenanceLogDialog } from '@/components/forms/maintenance-log-dialog';
+import { useAdminUser } from '@/components/admin/admin-provider';
 
 interface MaintenanceRow {
   id: string;
@@ -19,6 +20,7 @@ interface MaintenanceRow {
 }
 
 export default function AdminMaintenancePage() {
+  const user = useAdminUser();
   const { toast } = useToast();
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(1);
@@ -89,7 +91,7 @@ export default function AdminMaintenancePage() {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-slate-900">Maintenance</h1>
-        <Button onClick={() => setCreating(true)}>Add entry</Button>
+        {user.role === 'ADMIN' && <Button onClick={() => setCreating(true)}>Add entry</Button>}
       </div>
 
       <div className="flex max-w-xs flex-col gap-1.5">
@@ -119,7 +121,7 @@ export default function AdminMaintenancePage() {
               <TableHeaderCell>Description</TableHeaderCell>
               <TableHeaderCell>Cost (ZAR)</TableHeaderCell>
               <TableHeaderCell>Status</TableHeaderCell>
-              <TableHeaderCell>Actions</TableHeaderCell>
+              {user.role === 'ADMIN' && <TableHeaderCell>Actions</TableHeaderCell>}
             </tr>
           </TableHead>
           <TableBody>
@@ -137,16 +139,18 @@ export default function AdminMaintenancePage() {
                 <TableCell className="max-w-xs truncate">{m.description}</TableCell>
                 <TableCell>{m.costZar ? `R${m.costZar}` : '—'}</TableCell>
                 <TableCell>{m.status}</TableCell>
-                <TableCell>
-                  <div className="flex flex-wrap gap-2">
-                    <Button variant="ghost" onClick={() => setEditing(m)}>
-                      Edit
-                    </Button>
-                    <Button variant="ghost" onClick={() => setDeleting(m)}>
-                      Delete
-                    </Button>
-                  </div>
-                </TableCell>
+                {user.role === 'ADMIN' && (
+                  <TableCell>
+                    <div className="flex flex-wrap gap-2">
+                      <Button variant="ghost" onClick={() => setEditing(m)}>
+                        Edit
+                      </Button>
+                      <Button variant="ghost" onClick={() => setDeleting(m)}>
+                        Delete
+                      </Button>
+                    </div>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>

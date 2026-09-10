@@ -8,8 +8,25 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  const users = await prisma.user.findMany();
-  console.log(users.map(u => ({ username: u.username, role: u.role, passwordHash: u.passwordHash })));
+  const admin = await prisma.user.findFirst({ where: { role: 'ADMIN' } });
+  const forklift = await prisma.forklift.findFirst();
+  
+  if (!admin || !forklift) throw new Error('Missing admin or forklift');
+
+  console.log('Testing createMaintenanceLog logic...');
+  try {
+    await prisma.maintenanceLog.create({
+      data: {
+        forkliftId: forklift.id,
+        date: new Date("2026-09-10"), // Testing Date object
+        description: "Test log",
+        createdById: admin.id,
+      } as any // cast to any to bypass strict TS if needed, or leave as is
+    });
+    console.log('Success!');
+  } catch (err: any) {
+    console.error('Error:', err.message);
+  }
 }
 
 main().finally(() => prisma.$disconnect());

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Field } from '@/components/forms/field';
 import { EmptyState, Pagination, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAdminUser } from '@/components/admin/admin-provider';
 
 interface ForkliftRow {
   id: string;
@@ -18,6 +19,7 @@ interface ForkliftRow {
 }
 
 export default function AdminForkliftsPage() {
+  const user = useAdminUser();
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [items, setItems] = useState<ForkliftRow[]>([]);
@@ -63,9 +65,11 @@ export default function AdminForkliftsPage() {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-slate-900">Forklifts</h1>
-        <Link href="/admin/forklifts/new">
-          <Button>Add forklift</Button>
-        </Link>
+        {user.role === 'ADMIN' && (
+          <Link href="/admin/forklifts/new">
+            <Button>Add forklift</Button>
+          </Link>
+        )}
       </div>
 
       <div className="max-w-xs">

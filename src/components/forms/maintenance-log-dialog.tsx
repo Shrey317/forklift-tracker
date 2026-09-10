@@ -95,7 +95,7 @@ export function MaintenanceLogDialog({ open, existing, onClose, onSaved }: Maint
         e.preventDefault();
         onClose();
       }}
-      className="w-full max-w-md rounded-lg border border-slate-200 p-0 shadow-lg backdrop:bg-slate-900/40"
+      className="m-auto w-full max-w-md rounded-lg border border-slate-200 p-0 shadow-lg backdrop:bg-slate-900/40"
       aria-labelledby="maintenance-dialog-title"
     >
       <div className="flex flex-col gap-4 p-6">

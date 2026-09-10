@@ -21,7 +21,7 @@ export async function createMaintenanceLog(input: CreateMaintenanceLogInput, act
     const maintenanceLog = await tx.maintenanceLog.create({
       data: {
         forkliftId: input.forkliftId,
-        date: input.date,
+        date: new Date(input.date),
         description: input.description,
         costZar: input.costZar,
         status: input.status,

@@ -81,7 +81,7 @@ async function getSupervisorDashboardData(userId: string) {
     prisma.shift.count({ where: { isDeleted: false, startTime: { gte: today } } }),
     prisma.shift.findFirst({
       where: { status: 'ACTIVE', isDeleted: false, createdById: userId },
-      include: { forklift: { select: { displayId: true, name: true } } }
+      include: { forklift: { select: { displayId: true, name: true, qrToken: true } } }
     }),
     prisma.shift.findMany({
       where: { isDeleted: false, createdById: userId },

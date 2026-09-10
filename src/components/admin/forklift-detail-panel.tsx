@@ -8,6 +8,7 @@ import { StatusMessage } from '@/components/forms/status-message';
 import { ConfirmDialog } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/toast';
 import { getFriendlyErrorMessage } from '@/lib/api-error-messages';
+import { useAdminUser } from '@/components/admin/admin-provider';
 
 interface ForkliftDetailPanelProps {
   forklift: {
@@ -25,6 +26,8 @@ interface ForkliftDetailPanelProps {
 const STATUS_OPTIONS = ['ACTIVE', 'MAINTENANCE', 'OUT_OF_SERVICE'];
 
 export function ForkliftDetailPanel({ forklift }: ForkliftDetailPanelProps) {
+  const user = useAdminUser();
+  const isAdmin = user.role === 'ADMIN';
   const router = useRouter();
   const { toast } = useToast();
 
@@ -100,16 +103,17 @@ export function ForkliftDetailPanel({ forklift }: ForkliftDetailPanelProps) {
   return (
     <div className="flex flex-1 flex-col gap-6">
       <form onSubmit={handleSave} className="flex flex-col gap-4">
-        <Field label="Name" value={name} onChange={(e) => setName(e.target.value)} required minLength={3} maxLength={80} />
-        <Field label="Manufacturer" value={manufacturer} onChange={(e) => setManufacturer(e.target.value)} required />
-        <Field label="Model" value={model} onChange={(e) => setModel(e.target.value)} required />
+        <Field label="Name" value={name} onChange={(e) => setName(e.target.value)} required minLength={3} maxLength={80} disabled={!isAdmin} />
+        <Field label="Manufacturer" value={manufacturer} onChange={(e) => setManufacturer(e.target.value)} required disabled={!isAdmin} />
+        <Field label="Model" value={model} onChange={(e) => setModel(e.target.value)} required disabled={!isAdmin} />
 
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium text-slate-900">Power Source</label>
           <select
             value={powerSource}
             onChange={(e) => setPowerSource(e.target.value)}
-            className="min-h-11 rounded-md border border-slate-300 px-3 py-2 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            disabled={!isAdmin}
+            className="min-h-11 rounded-md border border-slate-300 px-3 py-2 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 disabled:bg-slate-50"
           >
             <option value="DIESEL">Diesel</option>
             <option value="LPG">LPG</option>
@@ -122,7 +126,8 @@ export function ForkliftDetailPanel({ forklift }: ForkliftDetailPanelProps) {
           <select
             value={trackingMode}
             onChange={(e) => setTrackingMode(e.target.value)}
-            className="min-h-11 rounded-md border border-slate-300 px-3 py-2 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            disabled={!isAdmin}
+            className="min-h-11 rounded-md border border-slate-300 px-3 py-2 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 disabled:bg-slate-50"
           >
             <option value="MILEAGE">Mileage (km)</option>
             <option value="ENGINE_HOURS">Engine Hours</option>
@@ -137,7 +142,8 @@ export function ForkliftDetailPanel({ forklift }: ForkliftDetailPanelProps) {
             id="status"
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="min-h-11 rounded-md border border-slate-300 px-3 py-2 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            disabled={!isAdmin}
+            className="min-h-11 rounded-md border border-slate-300 px-3 py-2 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 disabled:bg-slate-50"
           >
             {STATUS_OPTIONS.map((s) => (
               <option key={s} value={s}>
@@ -149,23 +155,29 @@ export function ForkliftDetailPanel({ forklift }: ForkliftDetailPanelProps) {
 
         <StatusMessage status={error ? 'error' : null} message={error} />
 
-        <Button type="submit" loading={saving} className="self-start">
-          Save changes
-        </Button>
+        {isAdmin && (
+          <Button type="submit" loading={saving} className="self-start">
+            Save changes
+          </Button>
+        )}
       </form>
 
       <div className="border-t border-slate-200 pt-4">
         <p className="mb-2 text-sm text-slate-500">
           This forklift is currently {forklift.isActive ? 'active' : 'deactivated'}.
         </p>
-        <StatusMessage status={toggleError ? 'error' : null} message={toggleError} />
-        <Button
-          variant={forklift.isActive ? 'danger' : 'secondary'}
-          onClick={() => setConfirmOpen(true)}
-          className="mt-2"
-        >
-          {forklift.isActive ? 'Deactivate' : 'Reactivate'}
-        </Button>
+        {isAdmin && (
+          <>
+            <StatusMessage status={toggleError ? 'error' : null} message={toggleError} />
+            <Button
+              variant={forklift.isActive ? 'danger' : 'secondary'}
+              onClick={() => setConfirmOpen(true)}
+              className="mt-2"
+            >
+              {forklift.isActive ? 'Deactivate' : 'Reactivate'}
+            </Button>
+          </>
+        )}
       </div>
 
       <ConfirmDialog

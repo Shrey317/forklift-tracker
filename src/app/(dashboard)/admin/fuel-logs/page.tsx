@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/toast';
 import { EditFuelLogDialog } from '@/components/forms/edit-fuel-log-dialog';
 import { formatReading } from '@/lib/format';
+import { useAdminUser } from '@/components/admin/admin-provider';
 
 interface FuelLogRow {
   id: string;
@@ -20,6 +21,7 @@ interface FuelLogRow {
 }
 
 export default function AdminFuelLogsPage() {
+  const user = useAdminUser();
   const { toast } = useToast();
   const [page, setPage] = useState(1);
   const [items, setItems] = useState<FuelLogRow[]>([]);
@@ -92,7 +94,7 @@ export default function AdminFuelLogsPage() {
               <TableHeaderCell>Litres</TableHeaderCell>
               <TableHeaderCell>Cost (ZAR)</TableHeaderCell>
               <TableHeaderCell>Reading</TableHeaderCell>
-              <TableHeaderCell>Actions</TableHeaderCell>
+              {user.role === 'ADMIN' && <TableHeaderCell>Actions</TableHeaderCell>}
             </tr>
           </TableHead>
           <TableBody>
@@ -110,16 +112,18 @@ export default function AdminFuelLogsPage() {
                 <TableCell>{f.fuelAmountLiters} L</TableCell>
                 <TableCell>{f.fuelCostZar ? `R${f.fuelCostZar}` : '—'}</TableCell>
                 <TableCell>{formatReading(f.readingAtRefuel, f.forklift.trackingMode)}</TableCell>
-                <TableCell>
-                  <div className="flex flex-wrap gap-2">
-                    <Button variant="ghost" onClick={() => setEditing(f)}>
-                      Edit
-                    </Button>
-                    <Button variant="ghost" onClick={() => setDeleting(f)}>
-                      Delete
-                    </Button>
-                  </div>
-                </TableCell>
+                {user.role === 'ADMIN' && (
+                  <TableCell>
+                    <div className="flex flex-wrap gap-2">
+                      <Button variant="ghost" onClick={() => setEditing(f)}>
+                        Edit
+                      </Button>
+                      <Button variant="ghost" onClick={() => setDeleting(f)}>
+                        Delete
+                      </Button>
+                    </div>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>

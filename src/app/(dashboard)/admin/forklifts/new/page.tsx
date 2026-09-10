@@ -7,8 +7,10 @@ import { Field } from '@/components/forms/field';
 import { StatusMessage } from '@/components/forms/status-message';
 import { getFriendlyErrorMessage } from '@/lib/api-error-messages';
 import { useToast } from '@/components/ui/toast';
+import { useAdminUser } from '@/components/admin/admin-provider';
 
 export default function NewForkliftPage() {
+  const user = useAdminUser();
   const router = useRouter();
   const { toast } = useToast();
   const [name, setName] = useState('');
@@ -51,6 +53,16 @@ export default function NewForkliftPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (user.role !== 'ADMIN') {
+    return (
+      <div className="flex h-full flex-col items-center justify-center p-8 text-center">
+        <h2 className="mb-2 text-xl font-semibold text-slate-900">Access Denied</h2>
+        <p className="text-slate-600">You do not have permission to add new forklifts.</p>
+        <Button className="mt-4" onClick={() => router.push('/admin/forklifts')}>Go back</Button>
+      </div>
+    );
   }
 
   return (

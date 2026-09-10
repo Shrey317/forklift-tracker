@@ -46,12 +46,17 @@ export function CameraScanner({ onScan }: CameraScannerProps) {
       const scanner = new QrScanner(
         videoRef.current,
         (result) => {
-          if (!cancelled) onScan(result.data);
+          if (!cancelled) {
+            // handle both legacy string result and new object result
+            const data = typeof result === 'string' ? result : result.data;
+            if (data) onScan(data);
+          }
         },
         {
           highlightScanRegion: true,
           highlightCodeOutline: true,
           preferredCamera: 'environment', // rear camera — this is a warehouse floor tool, not a selfie scanner
+          returnDetailedScanResult: true,
         },
       );
       scannerRef.current = scanner;
