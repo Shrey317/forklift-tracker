@@ -9,12 +9,14 @@ import { parseScannedQrContent } from '@/lib/qr-parse';
 export default function ScanPage() {
   const router = useRouter();
   const [scanError, setScanError] = useState<string | null>(null);
+  const [lastScanned, setLastScanned] = useState<string | null>(null);
 
   function goToForklift(code: string) {
     router.push(`/forklift/${encodeURIComponent(code)}`);
   }
 
   function handleScan(raw: string) {
+    setLastScanned(raw);
     const code = parseScannedQrContent(raw);
     if (!code) {
       // Locked Decision #20: a failed scan shows a clear retry state, and
@@ -36,6 +38,11 @@ export default function ScanPage() {
       {scanError && (
         <p role="alert" className="text-sm text-red-600">
           {scanError}
+        </p>
+      )}
+      {lastScanned && (
+        <p className="text-xs text-slate-500 break-all text-center">
+          Debug - Last scanned: {lastScanned}
         </p>
       )}
 
