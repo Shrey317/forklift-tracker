@@ -1,11 +1,15 @@
 import { z } from 'zod';
 
 export const forkliftStatusEnum = z.enum(['ACTIVE', 'MAINTENANCE', 'OUT_OF_SERVICE']);
+export const powerSourceEnum = z.enum(['DIESEL', 'LPG', 'ELECTRIC']);
+export const trackingModeEnum = z.enum(['MILEAGE', 'ENGINE_HOURS']);
 
 export const createForkliftSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters').max(80, 'Name must be 80 characters or fewer'),
   manufacturer: z.string().min(1, 'Manufacturer is required'),
   model: z.string().min(1, 'Model is required'),
+  powerSource: powerSourceEnum,
+  trackingMode: trackingModeEnum,
 });
 export type CreateForkliftInput = z.infer<typeof createForkliftSchema>;
 
@@ -22,6 +26,8 @@ export const updateForkliftSchema = z
     manufacturer: z.string().min(1).optional(),
     model: z.string().min(1).optional(),
     status: forkliftStatusEnum.optional(),
+    powerSource: powerSourceEnum.optional(),
+    trackingMode: trackingModeEnum.optional(),
     isActive: z.boolean().optional(),
     reason: z.string().max(1000).optional(), // audit-log reason capture (Section 19)
   })

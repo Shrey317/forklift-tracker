@@ -49,7 +49,7 @@ export default async function StartShiftPage({ params }: { params: Promise<{ cod
         <p className="text-sm text-slate-500">{forklift.displayId}</p>
         <h1 className="text-2xl font-semibold text-slate-900">Start shift</h1>
       </div>
-      <StartShiftForm forkliftId={forklift.id} forkliftCode={code} />
+      <StartShiftForm forkliftId={forklift.id} forkliftCode={code} trackingMode={forklift.trackingMode} />
     </main>
   );
 }

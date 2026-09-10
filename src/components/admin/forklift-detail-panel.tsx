@@ -16,6 +16,8 @@ interface ForkliftDetailPanelProps {
     manufacturer: string;
     model: string;
     status: string;
+    powerSource: string;
+    trackingMode: string;
     isActive: boolean;
   };
 }
@@ -30,6 +32,8 @@ export function ForkliftDetailPanel({ forklift }: ForkliftDetailPanelProps) {
   const [manufacturer, setManufacturer] = useState(forklift.manufacturer);
   const [model, setModel] = useState(forklift.model);
   const [status, setStatus] = useState(forklift.status);
+  const [powerSource, setPowerSource] = useState(forklift.powerSource);
+  const [trackingMode, setTrackingMode] = useState(forklift.trackingMode);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,7 +50,7 @@ export function ForkliftDetailPanel({ forklift }: ForkliftDetailPanelProps) {
       const res = await fetch(`/api/forklifts/${forklift.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, manufacturer, model, status }),
+        body: JSON.stringify({ name, manufacturer, model, status, powerSource, trackingMode }),
       });
       const body = await res.json();
 
@@ -99,6 +103,31 @@ export function ForkliftDetailPanel({ forklift }: ForkliftDetailPanelProps) {
         <Field label="Name" value={name} onChange={(e) => setName(e.target.value)} required minLength={3} maxLength={80} />
         <Field label="Manufacturer" value={manufacturer} onChange={(e) => setManufacturer(e.target.value)} required />
         <Field label="Model" value={model} onChange={(e) => setModel(e.target.value)} required />
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium text-slate-900">Power Source</label>
+          <select
+            value={powerSource}
+            onChange={(e) => setPowerSource(e.target.value)}
+            className="min-h-11 rounded-md border border-slate-300 px-3 py-2 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
+            <option value="DIESEL">Diesel</option>
+            <option value="LPG">LPG</option>
+            <option value="ELECTRIC">Electric</option>
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium text-slate-900">Tracking Mode</label>
+          <select
+            value={trackingMode}
+            onChange={(e) => setTrackingMode(e.target.value)}
+            className="min-h-11 rounded-md border border-slate-300 px-3 py-2 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
+            <option value="MILEAGE">Mileage (km)</option>
+            <option value="ENGINE_HOURS">Engine Hours</option>
+          </select>
+        </div>
 
         <div className="flex flex-col gap-1.5">
           <label htmlFor="status" className="text-sm font-medium text-slate-900">

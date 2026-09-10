@@ -41,7 +41,7 @@ export default async function ForkliftLandingPage({
   });
 
   const canManageShifts = user.role === 'SUPERVISOR' || user.role === 'ADMIN';
-  const canRecordFuel = user.role === 'FUEL_SUPERVISOR' || user.role === 'ADMIN';
+  const canRecordFuel = (user.role === 'FUEL_SUPERVISOR' || user.role === 'ADMIN') && forklift.powerSource !== 'ELECTRIC';
 
   return (
     <main className="mx-auto flex min-h-screen max-w-sm flex-col gap-6 px-4 py-8">
@@ -69,11 +69,18 @@ export default async function ForkliftLandingPage({
         )}
         {canRecordFuel && <ActionLink href={`/forklift/${code}/fuel`} label="Record fuel" />}
 
-        {!canManageShifts && !canRecordFuel && (
+        {!canManageShifts && !canRecordFuel && forklift.powerSource !== 'ELECTRIC' && (
           <p className="text-sm text-slate-500">
             Your role ({user.role.replace('_', ' ').toLowerCase()}) has no actions available for this
             forklift.
           </p>
+        )}
+
+        {forklift.powerSource === 'ELECTRIC' && (
+          <div className="rounded-md bg-slate-50 p-4 border border-slate-200">
+            <p className="text-sm font-medium text-slate-900">Electric Forklift</p>
+            <p className="text-sm text-slate-500 mt-1">Fuel tracking is not applicable.</p>
+          </div>
         )}
       </div>
 

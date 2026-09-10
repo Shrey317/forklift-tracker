@@ -17,7 +17,7 @@ export async function listFuelLogs(query: ListFuelLogsQuery) {
   const [items, totalCount] = await Promise.all([
     prisma.fuelLog.findMany({
       where,
-      include: { forklift: { select: { displayId: true, name: true } } },
+      include: { forklift: { select: { displayId: true, name: true, trackingMode: true } } },
       orderBy: { refuelDateTime: 'desc' },
       skip: (query.page - 1) * query.pageSize,
       take: query.pageSize,

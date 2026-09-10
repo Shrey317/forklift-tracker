@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getCurrentUser } from '@/lib/auth';
 import { lookupForkliftByQrToken } from '@/server/services/forklifts/list';
 import { prisma } from '@/lib/prisma';
+import { formatReading } from '@/lib/format';
 import { EndShiftForm } from '@/components/forms/end-shift-form';
 
 export default async function EndShiftPage({ params }: { params: Promise<{ code: string }> }) {
@@ -49,13 +50,14 @@ export default async function EndShiftPage({ params }: { params: Promise<{ code:
         <p className="text-sm text-slate-500">{forklift.displayId}</p>
         <h1 className="text-2xl font-semibold text-slate-900">End shift</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Started at {openShift.startingReading.toString()} km
+          Started at {formatReading(openShift.startingReading.toString(), forklift.trackingMode)}
         </p>
       </div>
       <EndShiftForm
         shiftId={openShift.id}
         forkliftCode={code}
         startingReading={openShift.startingReading.toString()}
+        trackingMode={forklift.trackingMode}
       />
     </main>
   );

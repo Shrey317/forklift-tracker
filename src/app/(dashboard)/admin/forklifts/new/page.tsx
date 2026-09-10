@@ -14,6 +14,8 @@ export default function NewForkliftPage() {
   const [name, setName] = useState('');
   const [manufacturer, setManufacturer] = useState('');
   const [model, setModel] = useState('');
+  const [powerSource, setPowerSource] = useState('DIESEL');
+  const [trackingMode, setTrackingMode] = useState('MILEAGE');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [nameError, setNameError] = useState<string | null>(null);
@@ -28,7 +30,7 @@ export default function NewForkliftPage() {
       const res = await fetch('/api/forklifts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, manufacturer, model }),
+        body: JSON.stringify({ name, manufacturer, model, powerSource, trackingMode }),
       });
       const body = await res.json();
 
@@ -66,6 +68,31 @@ export default function NewForkliftPage() {
         />
         <Field label="Manufacturer" value={manufacturer} onChange={(e) => setManufacturer(e.target.value)} required />
         <Field label="Model" value={model} onChange={(e) => setModel(e.target.value)} required />
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium text-slate-900">Power Source</label>
+          <select
+            value={powerSource}
+            onChange={(e) => setPowerSource(e.target.value)}
+            className="w-full min-h-11 rounded-md border px-3 py-2 text-base outline-none bg-white border-slate-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-foreground"
+          >
+            <option value="DIESEL">Diesel</option>
+            <option value="LPG">LPG</option>
+            <option value="ELECTRIC">Electric</option>
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium text-slate-900">Tracking Mode</label>
+          <select
+            value={trackingMode}
+            onChange={(e) => setTrackingMode(e.target.value)}
+            className="w-full min-h-11 rounded-md border px-3 py-2 text-base outline-none bg-white border-slate-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-foreground"
+          >
+            <option value="MILEAGE">Mileage (km)</option>
+            <option value="ENGINE_HOURS">Engine Hours</option>
+          </select>
+        </div>
 
         <StatusMessage status={error ? 'error' : null} message={error} />
 

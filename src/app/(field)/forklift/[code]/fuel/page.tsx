@@ -31,7 +31,7 @@ export default async function FuelPage({ params }: { params: Promise<{ code: str
         <p className="text-sm text-slate-500">{forklift.displayId}</p>
         <h1 className="text-2xl font-semibold text-slate-900">Record fuel</h1>
       </div>
-      <FuelForm forkliftId={forklift.id} forkliftCode={code} />
+      <FuelForm forkliftId={forklift.id} forkliftCode={code} trackingMode={forklift.trackingMode} />
     </main>
   );
 }

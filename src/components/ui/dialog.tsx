@@ -53,7 +53,7 @@ export function ConfirmDialog({
         e.preventDefault(); // we drive open/close via props, not the dialog's own cancel event
         onCancel();
       }}
-      className="w-full max-w-sm rounded-lg border border-slate-200 p-0 shadow-lg backdrop:bg-slate-900/40"
+      className="m-auto w-full max-w-sm rounded-lg border border-slate-200 p-0 shadow-lg backdrop:bg-slate-900/40"
       aria-labelledby="confirm-dialog-title"
       aria-describedby="confirm-dialog-description"
     >

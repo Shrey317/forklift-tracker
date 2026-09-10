@@ -8,9 +8,17 @@ export function AdminDashboard({ data, user }: { data: any; user: User }) {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
-        <p className="text-slate-500 mt-1">Welcome, {user.displayName ?? user.username}</p>
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
+          <p className="text-slate-500 mt-1">Welcome, {user.displayName ?? user.username}</p>
+        </div>
+        <Link 
+          href="/scan" 
+          className="inline-flex items-center justify-center rounded-md bg-blue-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800 transition-colors"
+        >
+          Scan Forklift
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">

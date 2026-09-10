@@ -6,16 +6,17 @@ import { Button } from '@/components/ui/button';
 import { Field } from './field';
 import { StatusMessage } from './status-message';
 import { getFriendlyErrorMessage } from '@/lib/api-error-messages';
-
+import { getTrackingUnit } from '@/lib/format';
 import { useToast } from '@/components/ui/toast';
 
 interface EndShiftFormProps {
   shiftId: string;
   forkliftCode: string;
   startingReading: string;
+  trackingMode: string;
 }
 
-export function EndShiftForm({ shiftId, forkliftCode, startingReading }: EndShiftFormProps) {
+export function EndShiftForm({ shiftId, forkliftCode, startingReading, trackingMode }: EndShiftFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [endingReading, setEndingReading] = useState('');
@@ -64,7 +65,7 @@ export function EndShiftForm({ shiftId, forkliftCode, startingReading }: EndShif
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
       <Field
-        label="Ending reading (km)"
+        label={`Ending reading (${getTrackingUnit(trackingMode)})`}
         name="endingReading"
         type="number"
         inputMode="decimal"
@@ -74,7 +75,7 @@ export function EndShiftForm({ shiftId, forkliftCode, startingReading }: EndShif
         value={endingReading}
         onChange={(e) => setEndingReading(e.target.value)}
         error={fieldError ?? undefined}
-        hint={`Must be ${startingReading} km or higher`}
+        hint={`Must be ${startingReading} ${getTrackingUnit(trackingMode)} or higher`}
       />
       <div className="flex flex-col gap-1.5">
         <label htmlFor="notes" className="text-sm font-medium text-slate-900">

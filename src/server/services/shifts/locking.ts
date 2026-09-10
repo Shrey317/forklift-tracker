@@ -6,6 +6,7 @@ interface ForkliftRow {
   display_id: string;
   status: string;
   is_active: boolean;
+  power_source: string;
 }
 
 /**
@@ -24,7 +25,7 @@ export async function lockForklift(
   forkliftId: string,
 ): Promise<ForkliftRow> {
   const rows = await tx.$queryRaw<ForkliftRow[]>`
-    SELECT id, display_id, status, is_active
+    SELECT id, display_id, status, is_active, power_source
     FROM forklifts WHERE id = ${forkliftId} FOR UPDATE
   `;
   const forklift = rows[0];

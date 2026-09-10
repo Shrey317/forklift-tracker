@@ -16,6 +16,22 @@ export function formatKm(value: string | number | null | undefined): string {
   return `${num.toLocaleString('en-ZA', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} km`;
 }
 
+export function formatReading(value: string | number | null | undefined, trackingMode: string): string {
+  if (value === null || value === undefined || value === '') return '—';
+  const num = typeof value === 'string' ? parseFloat(value) : value;
+  if (isNaN(num)) return '—';
+  const formatted = num.toLocaleString('en-ZA', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  return trackingMode === 'ENGINE_HOURS' ? `${formatted} hrs` : `${formatted} km`;
+}
+
+export function getTrackingLabel(trackingMode: string): string {
+  return trackingMode === 'ENGINE_HOURS' ? 'Engine Hours' : 'Mileage (km)';
+}
+
+export function getTrackingUnit(trackingMode: string): string {
+  return trackingMode === 'ENGINE_HOURS' ? 'hrs' : 'km';
+}
+
 /** Format hours: "12.50 h" */
 export function formatHours(value: string | number | null | undefined): string {
   if (value === null || value === undefined || value === '') return '—';

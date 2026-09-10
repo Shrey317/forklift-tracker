@@ -40,6 +40,8 @@ export default async function ForkliftDetailPage({ params }: { params: Promise<{
             manufacturer: forklift.manufacturer,
             model: forklift.model,
             status: forklift.status,
+            powerSource: forklift.powerSource,
+            trackingMode: forklift.trackingMode,
             isActive: forklift.isActive,
           }}
         />

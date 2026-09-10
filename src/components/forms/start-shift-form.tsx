@@ -6,15 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Field } from './field';
 import { StatusMessage } from './status-message';
 import { getFriendlyErrorMessage } from '@/lib/api-error-messages';
-
+import { getTrackingUnit } from '@/lib/format';
 import { useToast } from '@/components/ui/toast';
 
 interface StartShiftFormProps {
   forkliftId: string;
   forkliftCode: string;
+  trackingMode: string;
 }
 
-export function StartShiftForm({ forkliftId, forkliftCode }: StartShiftFormProps) {
+export function StartShiftForm({ forkliftId, forkliftCode, trackingMode }: StartShiftFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [startingReading, setStartingReading] = useState('');
@@ -64,7 +65,7 @@ export function StartShiftForm({ forkliftId, forkliftCode }: StartShiftFormProps
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
       <Field
-        label="Starting reading (km)"
+        label={`Starting reading (${getTrackingUnit(trackingMode)})`}
         name="startingReading"
         type="number"
         inputMode="decimal"

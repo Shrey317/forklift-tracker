@@ -20,7 +20,7 @@ export async function listShifts(query: ListShiftsQuery) {
   const [items, totalCount] = await Promise.all([
     prisma.shift.findMany({
       where,
-      include: { forklift: { select: { displayId: true, name: true } } },
+      include: { forklift: { select: { displayId: true, name: true, trackingMode: true } } },
       orderBy: { startTime: 'desc' },
       skip: (query.page - 1) * query.pageSize,
       take: query.pageSize,

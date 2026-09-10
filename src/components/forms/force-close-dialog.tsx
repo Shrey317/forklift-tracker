@@ -5,10 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Field } from './field';
 import { StatusMessage } from './status-message';
 import { getFriendlyErrorMessage } from '@/lib/api-error-messages';
+import { getTrackingUnit, formatReading } from '@/lib/format';
 
 interface ForceCloseDialogProps {
   open: boolean;
-  shift: { id: string; displayId: string; startingReading: string };
+  shift: { id: string; displayId: string; startingReading: string; trackingMode: string };
   onClose: () => void;
   onSaved: () => void;
 }
@@ -73,12 +74,12 @@ export function ForceCloseDialog({ open, shift, onClose, onSaved }: ForceCloseDi
           Force-close shift on {shift.displayId}
         </h2>
         <p className="text-sm text-slate-600">
-          Started at {shift.startingReading} km. This ends the shift on the operator&apos;s behalf — use this
+          Started at {formatReading(shift.startingReading, shift.trackingMode)}. This ends the shift on the operator&apos;s behalf — use this
           for a shift that was never properly ended.
         </p>
 
         <Field
-          label="Ending reading (km)"
+          label={`Ending reading (${getTrackingUnit(shift.trackingMode)})`}
           type="number"
           step="0.1"
           min={Number(shift.startingReading)}

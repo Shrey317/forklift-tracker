@@ -7,10 +7,11 @@ import { EmptyState, Pagination, Table, TableBody, TableCell, TableHead, TableHe
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/toast';
 import { EditFuelLogDialog } from '@/components/forms/edit-fuel-log-dialog';
+import { formatReading } from '@/lib/format';
 
 interface FuelLogRow {
   id: string;
-  forklift: { displayId: string; name: string };
+  forklift: { displayId: string; name: string; trackingMode: string };
   refuelDateTime: string;
   fuelAmountLiters: string;
   fuelCostZar: string | null;
@@ -108,7 +109,7 @@ export default function AdminFuelLogsPage() {
                 <TableCell>{new Date(f.refuelDateTime).toLocaleString('en-ZA')}</TableCell>
                 <TableCell>{f.fuelAmountLiters} L</TableCell>
                 <TableCell>{f.fuelCostZar ? `R${f.fuelCostZar}` : '—'}</TableCell>
-                <TableCell>{f.readingAtRefuel} km</TableCell>
+                <TableCell>{formatReading(f.readingAtRefuel, f.forklift.trackingMode)}</TableCell>
                 <TableCell>
                   <div className="flex flex-wrap gap-2">
                     <Button variant="ghost" onClick={() => setEditing(f)}>
@@ -130,7 +131,7 @@ export default function AdminFuelLogsPage() {
       {editing && (
         <EditFuelLogDialog
           open={!!editing}
-          fuelLog={editing}
+          fuelLog={{ ...editing, trackingMode: editing.forklift.trackingMode }}
           onClose={() => setEditing(null)}
           onSaved={() => {
             toast('Fuel entry updated.', 'success');

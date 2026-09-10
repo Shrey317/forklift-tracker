@@ -15,7 +15,13 @@ enum Role {
 
 enum TrackingMode {
   MILEAGE
-  // ENGINE_HOURS, ELECTRIC removed this phase — cheap to re-add later (Section 34)
+  ENGINE_HOURS
+}
+
+enum PowerSource {
+  DIESEL
+  LPG
+  ELECTRIC
 }
 
 enum ForkliftStatus {
@@ -169,6 +175,7 @@ model Forklift {
   model          String
   qrToken        String         @unique @map("qr_token")
   trackingMode   TrackingMode   @default(MILEAGE) @map("tracking_mode")
+  powerSource    PowerSource    @default(DIESEL) @map("power_source")
   status         ForkliftStatus @default(ACTIVE)
   isActive       Boolean        @default(true) @map("is_active")
   createdById    String         @map("created_by_id")

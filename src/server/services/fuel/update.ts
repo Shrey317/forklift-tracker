@@ -24,7 +24,10 @@ export async function updateFuelLog(
       throw new ApiError('NOT_FOUND', 'Fuel log not found.');
     }
 
-    await lockForklift(tx, fuelLog.forkliftId);
+    const lockedForklift = await lockForklift(tx, fuelLog.forkliftId);
+    if (lockedForklift.power_source === 'ELECTRIC') {
+      throw new ApiError('INVALID_STATE', 'Electric forklifts do not support fuel tracking.');
+    }
 
     if (input.readingAtRefuel !== undefined) {
       await assertEditedReadingWithinBounds(

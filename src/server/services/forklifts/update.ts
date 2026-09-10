@@ -45,12 +45,16 @@ export async function updateForkliftFields(
       manufacturer: before.manufacturer,
       model: before.model,
       status: before.status,
+      powerSource: before.powerSource,
+      trackingMode: before.trackingMode,
     },
     afterValue: {
       name: after.name,
       manufacturer: after.manufacturer,
       model: after.model,
       status: after.status,
+      powerSource: after.powerSource,
+      trackingMode: after.trackingMode,
     },
     reason,
   });

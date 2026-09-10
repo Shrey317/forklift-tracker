@@ -16,6 +16,7 @@ export type ErrorCode =
   | 'FORKLIFT_HAS_ACTIVE_SHIFT'
   | 'INVALID_READING'
   | 'RATE_LIMITED'
+  | 'INVALID_STATE'
   | 'INTERNAL_ERROR';
 
 const STATUS_BY_CODE: Record<ErrorCode, number> = {
@@ -30,6 +31,7 @@ const STATUS_BY_CODE: Record<ErrorCode, number> = {
   FORKLIFT_HAS_ACTIVE_SHIFT: 409,
   INVALID_READING: 422,
   RATE_LIMITED: 429,
+  INVALID_STATE: 409,
   INTERNAL_ERROR: 500,
 };
 

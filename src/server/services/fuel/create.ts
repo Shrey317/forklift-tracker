@@ -1,5 +1,6 @@
 import type { Role, Prisma } from '@/generated/prisma/client';
 import { prisma } from '@/lib/prisma';
+import { ApiError } from '@/lib/errors';
 import { writeAuditLogEntry } from '../audit/log';
 import { assertReadingNotBackward, lockForklift } from '../shifts/locking';
 import type { CreateFuelLogInput } from '@/lib/validations/fuel';
@@ -11,7 +12,10 @@ export async function createFuelLog(input: CreateFuelLogInput, actor: { id: stri
     // blocked by status; Business Rule 7: fuel never requires an open
     // shift) — the lock here is purely for the monotonic-reading check's
     // safety, not an availability gate the way shift-start's is.
-    await lockForklift(tx, input.forkliftId);
+    const lockedForklift = await lockForklift(tx, input.forkliftId);
+    if (lockedForklift.power_source === 'ELECTRIC') {
+      throw new ApiError('INVALID_STATE', 'Electric forklifts do not support fuel tracking.');
+    }
 
     await assertReadingNotBackward(tx, input.forkliftId, input.readingAtRefuel);
 

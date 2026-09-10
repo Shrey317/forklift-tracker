@@ -5,6 +5,8 @@ import QrScanner from 'qr-scanner';
 
 type ScannerState = 'starting' | 'scanning' | 'denied' | 'unsupported' | 'error';
 
+QrScanner.WORKER_PATH = '/qr-scanner-worker.min.js';
+
 interface CameraScannerProps {
   onScan: (code: string) => void;
 }
@@ -59,12 +61,8 @@ export function CameraScanner({ onScan }: CameraScannerProps) {
         if (!cancelled) setState('scanning');
       } catch (err) {
         if (cancelled) return;
-        // qr-scanner surfaces a DOMException with name "NotAllowedError"
-        // for a denied permission prompt; anything else is treated as a
-        // generic camera error, per Locked Decision #20's "clear
-        // retry/error state" — the exact message matters less than
-        // landing on the fallback reliably.
-        const name = err instanceof DOMException ? err.name : '';
+        console.error('Camera start error:', err);
+        const name = err instanceof DOMException ? err.name : (err instanceof Error ? err.name : '');
         setState(name === 'NotAllowedError' ? 'denied' : 'error');
       }
     }

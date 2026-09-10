@@ -6,15 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Field } from './field';
 import { StatusMessage } from './status-message';
 import { getFriendlyErrorMessage } from '@/lib/api-error-messages';
-
+import { getTrackingUnit } from '@/lib/format';
 import { useToast } from '@/components/ui/toast';
 
 interface FuelFormProps {
   forkliftId: string;
   forkliftCode: string;
+  trackingMode: string;
 }
 
-export function FuelForm({ forkliftId, forkliftCode }: FuelFormProps) {
+export function FuelForm({ forkliftId, forkliftCode, trackingMode }: FuelFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [fuelAmountLiters, setFuelAmountLiters] = useState('');
@@ -90,7 +91,7 @@ export function FuelForm({ forkliftId, forkliftCode }: FuelFormProps) {
         hint="Optional"
       />
       <Field
-        label="Reading at refuel (km)"
+        label={`Reading at refuel (${getTrackingUnit(trackingMode)})`}
         name="readingAtRefuel"
         type="number"
         inputMode="decimal"

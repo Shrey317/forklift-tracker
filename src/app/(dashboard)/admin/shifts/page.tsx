@@ -8,11 +8,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/toast';
 import { EditShiftDialog } from '@/components/forms/edit-shift-dialog';
 import { ForceCloseDialog } from '@/components/forms/force-close-dialog';
-import { formatDateTime, formatKm } from '@/lib/format';
+import { formatDateTime, formatReading } from '@/lib/format';
 
 interface ShiftRow {
   id: string;
-  forklift: { displayId: string; name: string };
+  forklift: { displayId: string; name: string; trackingMode: string };
   startTime: string;
   endTime: string | null;
   status: 'ACTIVE' | 'COMPLETED';
@@ -139,7 +139,7 @@ export default function AdminShiftsPage() {
                 <TableCell>{formatDateTime(s.startTime)}</TableCell>
                 <TableCell>{s.endTime ? formatDateTime(s.endTime) : '—'}</TableCell>
                 <TableCell>
-                  {formatKm(s.startingReading)} → {s.endingReading ? formatKm(s.endingReading) : '—'}
+                  {formatReading(s.startingReading, s.forklift.trackingMode)} → {s.endingReading ? formatReading(s.endingReading, s.forklift.trackingMode) : '—'}
                 </TableCell>
                 <TableCell>{s.totalHoursWorked ?? '—'}</TableCell>
                 <TableCell>{s.status}</TableCell>
@@ -171,7 +171,7 @@ export default function AdminShiftsPage() {
       {editing && (
         <EditShiftDialog
           open={!!editing}
-          shift={editing}
+          shift={{ ...editing, trackingMode: editing.forklift.trackingMode }}
           onClose={() => setEditing(null)}
           onSaved={() => {
             toast('Shift updated.', 'success');
@@ -184,7 +184,7 @@ export default function AdminShiftsPage() {
       {forceClosing && (
         <ForceCloseDialog
           open={!!forceClosing}
-          shift={{ id: forceClosing.id, displayId: forceClosing.forklift.displayId, startingReading: forceClosing.startingReading }}
+          shift={{ id: forceClosing.id, displayId: forceClosing.forklift.displayId, startingReading: forceClosing.startingReading, trackingMode: forceClosing.forklift.trackingMode }}
           onClose={() => setForceClosing(null)}
           onSaved={() => {
             toast('Shift force-closed.', 'success');

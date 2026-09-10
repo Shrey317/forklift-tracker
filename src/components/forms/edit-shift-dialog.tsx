@@ -5,10 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Field } from './field';
 import { StatusMessage } from './status-message';
 import { getFriendlyErrorMessage } from '@/lib/api-error-messages';
+import { getTrackingUnit } from '@/lib/format';
 
 interface EditShiftDialogProps {
   open: boolean;
-  shift: { id: string; startingReading: string; endingReading: string | null; notes: string | null };
+  shift: { id: string; startingReading: string; endingReading: string | null; notes: string | null; trackingMode: string };
   onClose: () => void;
   onSaved: () => void;
 }
@@ -83,7 +84,7 @@ export function EditShiftDialog({ open, shift, onClose, onSaved }: EditShiftDial
         </h2>
 
         <Field
-          label="Starting reading (km)"
+          label={`Starting reading (${getTrackingUnit(shift.trackingMode)})`}
           type="number"
           step="0.1"
           value={startingReading}
@@ -91,7 +92,7 @@ export function EditShiftDialog({ open, shift, onClose, onSaved }: EditShiftDial
         />
         {shift.endingReading !== null && (
           <Field
-            label="Ending reading (km)"
+            label={`Ending reading (${getTrackingUnit(shift.trackingMode)})`}
             type="number"
             step="0.1"
             value={endingReading}

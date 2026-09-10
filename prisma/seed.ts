@@ -99,6 +99,7 @@ async function main() {
       // 2. Create Shifts
       for (let i = 0; i < 15; i++) {
         const fl = createdForklifts[i % createdForklifts.length];
+        if (!fl) continue;
         const isCompleted = i < 12; // Last 3 are active
         
         const startTime = new Date(now);
@@ -132,6 +133,7 @@ async function main() {
       // 3. Create Fuel Logs
       for (let i = 0; i < 10; i++) {
         const fl = createdForklifts[i % createdForklifts.length];
+        if (!fl) continue;
         const refuelTime = new Date(now);
         refuelTime.setDate(now.getDate() - (i % 5));
         
@@ -151,6 +153,7 @@ async function main() {
       // 4. Create Maintenance Logs
       for (let i = 0; i < 5; i++) {
         const fl = createdForklifts[i % createdForklifts.length];
+        if (!fl) continue;
         const logDate = new Date(now);
         logDate.setDate(now.getDate() - i * 3);
         const isCompleted = i % 2 === 0;
@@ -163,6 +166,27 @@ async function main() {
             description: `Scheduled maintenance check point ${i + 1}`,
             costZar: isCompleted ? new Decimal(1200 + i * 100) : null,
             status: isCompleted ? 'COMPLETED' : 'SCHEDULED'
+          }
+        });
+      }
+
+      // 5. Create Audit Logs
+      for (let i = 0; i < 15; i++) {
+        const fl = createdForklifts[i % createdForklifts.length];
+        if (!fl) continue;
+        const logDate = new Date(now);
+        logDate.setDate(now.getDate() - (15 - i));
+        
+        await prisma.auditLogEntry.create({
+          data: {
+            actorUserId: adminUser.id,
+            actorRole: 'ADMIN',
+            action: 'FORKLIFT_CREATED',
+            targetType: 'FORKLIFT',
+            targetId: fl.id,
+            afterValue: { displayId: fl.displayId, name: fl.name, status: fl.status },
+            reason: 'Initial setup of forklift in system',
+            createdAt: logDate
           }
         });
       }

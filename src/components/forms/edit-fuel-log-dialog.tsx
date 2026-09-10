@@ -5,10 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Field } from './field';
 import { StatusMessage } from './status-message';
 import { getFriendlyErrorMessage } from '@/lib/api-error-messages';
+import { getTrackingUnit } from '@/lib/format';
 
 interface EditFuelLogDialogProps {
   open: boolean;
-  fuelLog: { id: string; fuelAmountLiters: string; fuelCostZar: string | null; readingAtRefuel: string; notes: string | null };
+  fuelLog: { id: string; fuelAmountLiters: string; fuelCostZar: string | null; readingAtRefuel: string; notes: string | null; trackingMode: string };
   onClose: () => void;
   onSaved: () => void;
 }
@@ -77,7 +78,7 @@ export function EditFuelLogDialog({ open, fuelLog, onClose, onSaved }: EditFuelL
         e.preventDefault();
         onClose();
       }}
-      className="w-full max-w-md rounded-lg border border-slate-200 p-0 shadow-lg backdrop:bg-slate-900/40"
+      className="m-auto w-full max-w-md rounded-lg border border-slate-200 p-0 shadow-lg backdrop:bg-slate-900/40"
       aria-labelledby="edit-fuel-title"
     >
       <div className="flex flex-col gap-4 p-6">
@@ -101,7 +102,7 @@ export function EditFuelLogDialog({ open, fuelLog, onClose, onSaved }: EditFuelL
           hint="Optional"
         />
         <Field
-          label="Reading at refuel (km)"
+          label={`Reading at refuel (${getTrackingUnit(fuelLog.trackingMode)})`}
           type="number"
           step="0.1"
           value={readingAtRefuel}
